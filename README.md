@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1. the purpose of this project is to make an user management system that can create, update, edit, delete, and a functional UI using angular as frontend and node.js for backend. This will help us prepare for challenges that come to us.
 
 # 2. The installation command i use is npm install but it gets error so i use the npm install --legacy-peer-deps to install the angular foundational dependencies. the running command is ng serve or ng serve --open
