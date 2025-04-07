@@ -9,7 +9,7 @@
 
 
 
-# 4.  the testing in backend is ok but in the email part is it has error it says the value is invalid and for the frontend no testing has been done because the code has a lot of errors in the code provided and i didnt fix it on time eventhough ive been fixing it for 4 days now.
+# 4.  The testing in the backend is successful and didnt encounter any problem at all. the securirt testing result for now in the backend is the token where 1. you cannot successfully verify your email without the token 2. also you cant easily change password without the jwToken.
 
 # 5. for a good branching and commting , best practice for this is committing little by little every work you have done and dont push all files at once.  pull request is done only when its finish debugging, etc.
 
