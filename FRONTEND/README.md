@@ -5,24 +5,24 @@ A full-stack user management system built with Node.js, MySQL, and Angular 17. T
 
 ## 2. Installation Instructions:
 ### Clone the repository
-``` bash
-git clone https://github.com/Kimmadula/user-management-system-FRONTEND.git
-cd user-managament-system-FRONTEND
-```
+
+# git clone https://github.com/JohnCliford02/user-management-system.git
+# cd user-managament-system-FRONTEND
+
 ### Install Dependencies
-``` bash
-npm install
-npm install bootstrap
-npm install -g @angular/cli
-```
+
+# npm install
+# npm install bootstrap
+# npm install -g @angular/cli
+
 ### Create initial starter app
-``` bash
-ng new user-management-system
-```
+
+# ng new user-management-system
+
 ### Run Angular app
-``` bash
-ng serve
-```
+
+# ng serve
+
 ## 3. Usage:
 - Email Sign-Up & Verification
 
