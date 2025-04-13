@@ -35,7 +35,6 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 case url.endsWith('/accounts/forgot-password') && method === 'POST':
                     return forgotPassword();
                 case url.endsWith('/accounts/validate-reset-token') && method === 'POST':
-                    // const body = JSON.parse(requestBody);
                     return validateResetToken(body);
                 case url.endsWith('/accounts/reset-password') && method === 'POST':
                     return resetPassword();
@@ -91,6 +90,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             ...basicDetails(account),
             jwtToken: generateJwtToken(account)
         });
+        
     }
 
     function revokeToken() {
@@ -110,6 +110,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         const account = body;
 
         if (accounts.find((x: Account) => x.email === account.email)) {
+            //display email already registered "email" in alert
             setTimeout(() => {
                 alertService.info(`
                     <h4>Already Registered</h4>
@@ -119,11 +120,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     `, { autoClose: false });
             }, 1000);
 
+            // always return ok() response to prevent email enumeration
             return ok();
         }
 
+        //assign acount id and a few other properties then save
         account.id =  newAccountId();
             if (account.id === 1) {
+                // first registered account is an admin
                 account.role = Role.Admin;
             } else {
                 account.role = Role.User;
@@ -136,6 +140,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             accounts.push(account);
             localStorage.setItem(accountsKey, JSON.stringify(accounts));
         
+        // display verification email in alert
         setTimeout(() => {
             const verifyUrl = `${location.origin}/account/verify-email?token=${account.verificationToken}`;
             alertService.info(`
@@ -153,8 +158,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function verifyEmail() {
         const { token } = body;
         const account = accounts.find((x: Account) => !!x.verificationToken && x.verificationToken === token);
+        
         if (!account) return error( 'Verification failed');
 
+        // set is verified flag to true if token is valid
         account.isVerified = true;
         localStorage.setItem(accountsKey, JSON.stringify(accounts));
 

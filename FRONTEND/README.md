@@ -4,7 +4,7 @@
 A full-stack user management system built with Node.js, MySQL, and Angular 17. This system allows users to register, verify their email, and log in securely. Admins can manage users, while developers can simulate data using a fake backend for frontend development. The project implements secure JWT authentication, role-based access, and essential account recovery features..
 
 ## 2. Installation Instructions.:
-### Clone the repository.
+## Clone the repository.
 
 # git clone https://github.com/JohnCliford02/user-management-system.git
 # cd user-managament-system
@@ -26,32 +26,33 @@ A full-stack user management system built with Node.js, MySQL, and Angular 17. T
 # 3. Usage:
 - Email Sign-Up & Verification.
 
-# Navigate to http://localhost:4200/accounts/register
-# Fill out the form to create an account.
-# An email with a verification link will be sent.
-# Click the link to activate your account.
-# Proceed to log in via http://localhost:4000/accounts/login
+# Go to registration page http://localhost:4200/account/register
+# Fill out the Form.
+# A verification link will be automatically appear after registering.
+# Click the link to authenticate the account.
+# Log in via http://localhost:4200/account/login
 
-## Other Features (Team Collaboration)
-# Profile Management: /profile
-# Admin Dashboard: /admin
-# Role-based access redirects based on user roles.
-# Password reset and recovery available via /accounts/reset-password
+## Other Features
+# Profile: http://localhost:4200/profile
+# Admin Dashboard: http://localhost:4200/admin
+# Forgot password: http://localhost:4200/account/forgot-password
 
 ### 4. Testing: 
 # Functional Testing
-# Verified registration, email confirmation, and login processes.
+# Valid user credentials allow login, invalid password error, empty fields trigger validation, redirect to dashboard after login and email confirmation.
 # Security Testing
-# Input validation, CSRF protection, and token verification tested.
+# Input validation, CSRF protection in place (token check), and token verification tested.
 
 # 5. Contributing:
-# Implement the sign-up, verification, and login components in the # # Angular boilerplate.
+## Implement the sign-up, verification, and login components in the # # Angular boilerplate.
 
 # Create a new branch for the feature
-# git checkout -b MADULA-frontend-profile-admin-fake-backend
-# git checkout -b Gijan-frontend-signup-auth
+# git checkout -b branch-Jlaki
+# git checkout -b branch-Adolfo
+# git checkout -b branch-mahinay
+# git checkout -b branch-tanglao    
 
-# Make changes, then stage them
+# Make changes and then stage them:
 
 # git add . 
 
