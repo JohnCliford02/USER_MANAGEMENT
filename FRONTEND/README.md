@@ -70,4 +70,4 @@ A full-stack user management system built with Node.js, MySQL, and Angular 17. T
 
 
 # 6. License
-# MIT License
+# This project is licensed under the MIT License.
