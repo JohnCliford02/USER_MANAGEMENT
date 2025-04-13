@@ -63,8 +63,11 @@ A full-stack user management system built with Node.js, MySQL, and Angular 17. T
 
 # Push branch and submit a Pull Request
 
-# git push origin Gijan-frontend-signup-auth
-# git push origin MADULA-frontend-profile-admin-fake-backend
+# git push origin https://github.com/JohnCliford02/user-management-system/tree/branch-Jlaki
+### git push origin https://github.com/JohnCliford02/user-management-system.git
+
+# and going to the main branch review and request a PR request to successfully merge 
+
 
 # 6. License
 # MIT License
