@@ -59,7 +59,7 @@ A full-stack user management system built with Node.js, MySQL, and Angular 17. T
 # Commit changes often with  messages
 
 # git commit -m "Implement email sign-up, verification, and authentication"
-# git commit -m "Implement profile management, admin dashboard, and fake backend"
+# git commit -m "Working fake-backend"
 
 # Push branch and submit a Pull Request
 
