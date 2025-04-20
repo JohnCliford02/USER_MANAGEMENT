@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
+import { map, finalize, first } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Account } from '../_models';
@@ -80,15 +80,20 @@ export class AccountService {
     return this.http.post(baseUrl, params);
   }
 
-  update(id:string, params:object) {
+  update(id: string, params: any) {
+    console.log('Sending update request:', { id, params }); // Debug log
     return this.http.put(`${baseUrl}/${id}`, params)
-      .pipe(map((account: any) => {
-        if (account.id === this.accountValue?.id) {
-          account = { ...this.accountValue, ...account };
-          this.accountSubject.next(account);
-        }
-        return account;
-      }));
+      .pipe(
+        map((account: any) => {
+          console.log('Response from backend:', account); // Debug log
+          // If the updated account is the currently logged-in user, update the accountSubject
+          if (account.id === this.accountValue?.id) {
+            account = { ...this.accountValue, ...account };
+            this.accountSubject.next(account);
+          }
+          return account; // Return the updated account
+        })
+      );
   }
 
   delete(id: string) {
@@ -115,4 +120,46 @@ export class AccountService {
   private stopRefreshTokenTimer() {
     clearTimeout(this.refreshTokenTimeout);
   }
+
+  updateAccountStatus(account: Account) {
+    if (!account || !account.id) {
+      console.error('Invalid account object');
+      return;
+    }
+
+    this.update(String(account.id), { isActive: account.isActive })
+      .subscribe({
+        next: (updatedAccount) => {
+          console.log('Account updated:', updatedAccount);
+        },
+        error: (err) => {
+          console.error('Error updating account:', err);
+        }
+      });
+  }
+
+  toggleAccountStatus(account: any) {
+    console.log('Account role:', account.role); // Debug log
+  
+    if (account.role === 'Admin') {
+      console.warn('Cannot toggle status for admin accounts.');
+      return; // Prevent toggling for admin accounts
+    }
+  
+    // Toggle the isActive property
+    account.isActive = !account.isActive;
+  
+    // Call the backend to update the account status
+    this.update(account.id, { isActive: account.isActive })
+      .pipe(first())
+      .subscribe({
+        next: (updatedAccount) => {
+          console.log('Account updated successfully:', updatedAccount);
+        },
+        error: (err) => {
+          console.error('Error updating account status:', err);
+        }
+      });
+  }
+
 }

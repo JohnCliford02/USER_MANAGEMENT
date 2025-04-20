@@ -59,16 +59,20 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function authenticate() {
         const { email, password } = body;
         const account = accounts.find((x: Account) => x.email === email && x.password === password && x.isVerified);
-      
+    
         if (!account) return error('Email or password is incorrect');
-      
-        // add refresh token to account
+    
+        if (!account.isActive) {
+            return error('Account is disabled'); // Return error if account is deactivated
+        }
+    
+        // Add refresh token to account
         account.refreshTokens.push(generateRefreshToken());
         localStorage.setItem(accountsKey, JSON.stringify(accounts));
-      
+    
         return ok({
-          ...basicDetails(account),
-          jwtToken: generateJwtToken(account)
+            ...basicDetails(account),
+            jwtToken: generateJwtToken(account)
         });
     }
 
@@ -227,8 +231,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       
     function getAccounts() {
         if (!isAuthenticated()) return unauthorized();
-        return ok(accounts.map((x: Account) => basicDetails(x)));
-      }
+    
+        return ok(accounts.map((x: Account) => ({
+            ...x,
+            role: x.role || 'User' // Ensure role is set (default to 'User' if undefined)
+        })));
+    }
       
     function getAccountById() {
         if (!isAuthenticated()) return unauthorized();
@@ -258,18 +266,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     
 
     function createAccount() {
-        if (!isAuthorized(Role.Admin)) return unauthorized();
-      
         const account = body;
-      
+    
         if (accounts.find((x: Account) => x.email === account.email)) {
-          return error(`Email ${account.email} is already registered`);
+            return error(`Email ${account.email} is already registered`);
         }
-      
-        // assign account id and a few other properties then save
+    
         account.id = newAccountId();
         account.dateCreated = new Date().toISOString();
         account.isVerified = true;
+        account.isActive = account.role === 'Admin' ? true : false; // Admin accounts are always active
         account.refreshTokens = [];
         delete account.confirmPassword;
         accounts.push(account);
@@ -288,21 +294,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     
         if (!account) return error('Account not found');
     
-        const current = currentAccount();
-        if (!current || !current.id) return unauthorized();
-    
-        if (account.id !== current.id && !isAuthorized(Role.Admin)) {
-            return unauthorized();
+        // Prevent updating isActive for admin accounts
+        if (account.role === 'Admin' && params.isActive !== undefined) {
+            return error('Cannot change the status of admin accounts.');
         }
     
-        if (!params.password) {
-            delete params.password;
-        }
-    
-        delete params.confirmPassword;
-    
-        Object.assign(account, params);
-        localStorage.setItem(accountsKey, JSON.stringify(accounts));
+        Object.assign(account, params); // Update account properties
+        localStorage.setItem(accountsKey, JSON.stringify(accounts)); // Save updated accounts array to local storage
     
         return ok(basicDetails(account));
     }
