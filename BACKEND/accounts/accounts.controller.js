@@ -6,7 +6,6 @@ const authorize = require('_middleware/authorize');
 const Role = require('_helpers/role');
 const accountService = require('./account.service');
 
-// routes
 router.post('/authenticate', authenticateSchema, authenticate);
 router.post('/refresh-token', refreshToken);
 router.post('/revoke-token', authorize(), revokeTokenSchema, revokeToken);
@@ -61,13 +60,11 @@ function authenticateSchema(req, res, next) {
   }
   
   function revokeToken(req, res, next) {
-    // accept token from request body or cookie
     const token = req.body.token || req.cookies.refreshToken;
     const ipAddress = req.ip;
   
     if (!token) return res.status(400).json({ message: 'Token is required' });
   
-    // users can revoke their own tokens and admins can revoke any tokens
     if (!req.ownsToken(token) && req.user.role !== Role.Admin) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -108,7 +105,7 @@ function authenticateSchema(req, res, next) {
       .then(() => res.json({ message: 'Verification successful, you can now login' }))
       .catch(next);
   }
-  
+
   function forgotPasswordSchema(req, res, next) {
     const schema = Joi.object({
       email: Joi.string().email().required()
@@ -157,7 +154,10 @@ function authenticateSchema(req, res, next) {
   }
 
   function getById(req, res, next) {
-    // users can get their own account and admins can get any account
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized: User not found in request' });
+    }
+  
     if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -166,6 +166,7 @@ function authenticateSchema(req, res, next) {
       .then(account => account ? res.json(account) : res.sendStatus(404))
       .catch(next);
   }
+  
   
   function createSchema(req, res, next) {
     const schema = Joi.object({
@@ -196,7 +197,6 @@ function authenticateSchema(req, res, next) {
       confirmPassword: Joi.string().valid(Joi.ref('password')).empty('')
     };
   
-    // only admins can update role
     if (req.user.role === Role.Admin) {
       schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty('');
     }
@@ -206,7 +206,6 @@ function authenticateSchema(req, res, next) {
   }
   
   function update(req, res, next) {
-    // users can update their own account and admins can update any account
     if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -217,7 +216,6 @@ function authenticateSchema(req, res, next) {
   }
 
   function _delete(req, res, next) {
-    // users can delete their own account and admins can delete any account
     if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -227,10 +225,8 @@ function authenticateSchema(req, res, next) {
       .catch(next);
   }
   
-  // helper functions
   
   function setTokenCookie(res, token) {
-    // create cookie with refresh token that expires in 7 days
     const cookieOptions = {
       httpOnly: true,
       expires: new Date(Date.now() + 7*24*60*60*1000)

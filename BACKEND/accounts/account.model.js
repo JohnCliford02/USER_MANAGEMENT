@@ -12,7 +12,7 @@ function model(sequelize) {
         acceptTerms: { type: DataTypes.BOOLEAN },
         role: { type: DataTypes.STRING, allowNull: false },
         verificationToken: { type: DataTypes.STRING },
-        verified: { type: DataTypes.DATE },
+        verified: { type: DataTypes.DATE},
         resetToken: { type: DataTypes.STRING },
         resetTokenExpires: { type: DataTypes.DATE },
         passwordReset: { type: DataTypes.DATE },
@@ -25,17 +25,14 @@ function model(sequelize) {
     };
 
     const options = {
-        // disable default timestamp fields (createdAt and updatedAt)
         timestamps: false,
         defaultScope: {
-            // exclude password hash by default
             attributes: { exclude: ['passwordHash'] }
         },
         scopes: {
-            // include hash with this scope
             withHash: { attributes: {}, }
         }
     };
 
-    return sequelize.define('Account', attributes, options);
+    return sequelize.define('account', attributes, options);
 }
